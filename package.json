@@ -1,0 +1,26 @@
+{
+    "name": "assignment-1-graph",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "start": "",
+        "test": "jest"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "devDependencies": {
+        "@types/jest": "^24.0.18",
+        "@types/node": "^12.7.8",
+        "@typescript-eslint/eslint-plugin": "^2.3.1",
+        "@typescript-eslint/parser": "^2.3.1",
+        "eslint": "^6.4.0",
+        "eslint-config-prettier": "^6.3.0",
+        "eslint-plugin-prettier": "^3.1.1",
+        "jest": "^24.9.0",
+        "prettier": "^1.18.2",
+        "ts-jest": "^24.1.0",
+        "typescript": "^3.6.3"
+    }
+}

@@ -5,5 +5,9 @@ module.exports = {
         ecmaVersion: 2018,
         sourceType: 'module',
     },
-    rules: {},
+    rules: {
+        '@typescript-eslint/interface-name-prefix': 'off',
+        '@typescript-eslint/no-unused-vars': 'off',
+        '@typescript-eslint/no-explicit-any': 'off',
+    },
 };

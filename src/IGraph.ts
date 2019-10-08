@@ -2,9 +2,9 @@ import { GraphVertex } from './GraphVertex';
 import { GraphEdge } from './GraphEdge';
 
 export interface IGraph {
-    addVertex(vertex: GraphVertex): GraphVertex;
-    removeVertex(vertex: GraphVertex): GraphVertex;
-    addEdge(origin: GraphVertex, destination: GraphVertex): GraphEdge;
-    getEdge(origin: GraphVertex, destination: GraphVertex): GraphEdge;
-    getNeighbors(vertex: GraphVertex): Array<GraphEdge>;
+    addVertex(vertex: string): GraphVertex;
+    removeVertex(vertex: string): GraphVertex;
+    addEdge(origin: string, destination: string, weight: number): GraphEdge;
+    getEdge(origin: string, destination: string): GraphEdge;
+    getNeighbors(vertex: string): Array<GraphEdge>;
 }

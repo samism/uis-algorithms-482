@@ -13,7 +13,7 @@ function initializeGraph(fileContent: Buffer): void {
             case 'directed unweighted':
                 return new SimpleGraph(true, false);
             case 'directed weighted':
-                return new SimpleGraph(true, false);
+                return new SimpleGraph(true, true);
             case 'undirected unweighted':
                 return new SimpleGraph(false, false);
             case 'undirected weighted':
@@ -29,8 +29,11 @@ function initializeGraph(fileContent: Buffer): void {
             const [origin, destination, weight] = vertex.split('=');
 
             graph.addVertex(origin);
-            graph.addVertex(destination);
-            graph.addEdge(origin, destination, +weight);
+
+            if (destination) {
+                graph.addVertex(destination);
+                graph.addEdge(origin, destination, +weight);
+            }
         });
 
     console.log(graph.toString());

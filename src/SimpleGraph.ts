@@ -16,17 +16,24 @@ export class SimpleGraph implements IGraph {
     addEdge(originLabel: string, destinationLabel: string, weight: number): GraphEdge {
         const originVertex = this.vertices.find(vertex => vertex.name === originLabel);
         const destinationVertex = this.vertices.find(vertex => vertex.name === destinationLabel);
-        const edge: GraphEdge = new GraphEdge(originLabel, destinationLabel, weight);
 
-        if (originVertex && destinationVertex) {
-            originVertex.edges.push(edge);
-            destinationVertex.edges.push(edge);
-            return edge;
+        if (!originVertex || !destinationVertex) {
+            throw new Error(
+                `Could not find the vertices for edge: origin ${originLabel} and destination ${destinationLabel}.`,
+            );
         }
 
-        throw new Error(
-            `Could not find the vertices for edge: origin ${originLabel} and destination ${destinationLabel}.`,
-        );
+        const edge: GraphEdge = new GraphEdge(originLabel, destinationLabel, weight);
+        originVertex.edges.push(edge);
+
+        if (!this.directed && originLabel !== destinationLabel) {
+            const complimentingEdge: GraphEdge = new GraphEdge(destinationLabel, originLabel, weight);
+            destinationVertex.edges.push(complimentingEdge);
+
+            return complimentingEdge;
+        }
+
+        return edge;
     }
 
     addVertex(vertexLabel: string): GraphVertex {
@@ -42,6 +49,10 @@ export class SimpleGraph implements IGraph {
     removeVertex(vertexLabel: string): GraphVertex {
         const vertexIndex = this.vertices.findIndex(vertex => vertex.name === vertexLabel);
         const [deleted] = this.vertices.splice(vertexIndex, 1);
+
+        if (!deleted) {
+            throw new Error(`Could not find the vertex: ${vertexLabel}.`);
+        }
 
         return deleted;
     }
@@ -65,18 +76,20 @@ export class SimpleGraph implements IGraph {
     getNeighbors(vertexLabel: string): Array<GraphEdge> {
         const vertex = this.vertices.find(vertex => vertex.name === vertexLabel);
 
-        if (vertex) {
-            return vertex.edges;
+        if (!vertex) {
+            throw new Error(`Could not find the vertex: ${vertexLabel}.`);
         }
 
-        return [];
+        return vertex.edges;
     }
 
     toString(): string {
         return this.vertices
             .map(vertex => {
                 const name = vertex.name;
-                const edges = vertex.edges.map(edge => `(${edge.destination.name}, ${edge.weight})`);
+                const edges = vertex.edges.map(edge =>
+                    this.weighted ? `(${edge.destination.name}, ${edge.weight})` : edge.destination.name,
+                );
 
                 return `${name}: ${edges.join(', ')}`;
             })

@@ -5,7 +5,7 @@ export class GraphEdge {
     private readonly _origin: GraphVertex;
     private readonly _destination: GraphVertex;
 
-    constructor(origin: string, destination: string, weight = 1) {
+    constructor(origin: string, destination: string, weight: number) {
         this._origin = new GraphVertex(origin);
         this._destination = new GraphVertex(destination);
         this._weight = weight;

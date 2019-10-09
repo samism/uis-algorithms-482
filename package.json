@@ -1,6 +1,6 @@
 {
     "name": "assignment-1-graph",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "Graph data structure implementation & library written in TS.",
     "main": "index.js",
     "scripts": {

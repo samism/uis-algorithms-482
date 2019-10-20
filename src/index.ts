@@ -6,7 +6,7 @@ import inquirer from 'inquirer';
 import { SimpleGraph } from './SimpleGraph';
 
 function initializeGraph(fileContent: Buffer): void {
-    const [header, ...vertices]: string[] = fileContent.toString().split('\n');
+    const [header, ...vertices]: string[] = fileContent.toString().split('\r\n');
 
     const graph: SimpleGraph = ((header: string): SimpleGraph => {
         switch (header) {

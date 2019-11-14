@@ -11,8 +11,8 @@ export class MinHeap implements IMinHeap {
     private readonly positionMap: Record<number, number>; // O(1) lookup of value's index in the array
     private size: number;
 
-    private constructor(size: number) {
-        this.size = size;
+    private constructor() {
+        this.size = 0;
         this.heap = [];
         this.positionMap = {};
     }
@@ -26,16 +26,8 @@ export class MinHeap implements IMinHeap {
     }
 
     private getParentIndex(childIndex: number): number {
-        return (childIndex - 1) / 2;
+        return Math.floor((childIndex - 1) / 2);
     }
-
-    // private hasLeftChild(index: number): boolean {
-    //     return this.getLeftChildIndex(index) < this.size;
-    // }
-    //
-    // private hasRightChild(index: number): boolean {
-    //     return this.getRightChildIndex(index) < this.size;
-    // }
 
     private getLeftChild(index: number): number {
         return this.heap[this.getLeftChildIndex(index)];
@@ -44,10 +36,6 @@ export class MinHeap implements IMinHeap {
     private getRightChild(index: number): number {
         return this.heap[this.getRightChildIndex(index)];
     }
-
-    // private hasParent(index: number): boolean {
-    //     return index !== 0 && this.getParentIndex(index) >= 0;
-    // }
 
     private getNode(index: number): number {
         return this.heap[index];
@@ -67,30 +55,7 @@ export class MinHeap implements IMinHeap {
     }
 
     // for removal
-    // when removing, element at i is deleted, "last" replaces it.
-    // this method ensures that this new element keeps falling down the tree as long as it is greater than its children
     heapifyDown(i: number): void {
-        // let currentIndex = i;
-        //
-        // // if has left child, right child exists
-        // while (this.hasLeftChild(currentIndex)) {
-        //     let smallerChildIndex = this.getLeftChildIndex(currentIndex);
-        //
-        //     if (
-        //         this.hasRightChild(currentIndex) &&
-        //         this.getRightChild(currentIndex) < this.getLeftChild(currentIndex)
-        //     ) {
-        //         smallerChildIndex = this.getRightChildIndex(currentIndex);
-        //     }
-        //
-        //     if (this.getNode(currentIndex) > this.getNode(smallerChildIndex)) {
-        //         break;
-        //     }
-        //
-        //     this.swap(currentIndex, smallerChildIndex);
-        //     currentIndex = smallerChildIndex;
-        // }
-
         let smallerChildIndex = -1;
 
         if (2 * i > this.size) {
@@ -119,18 +84,7 @@ export class MinHeap implements IMinHeap {
 
     // on insertion
     heapifyUp(i: number): void {
-        // let currentIndex = i;
-        //
-        // while (this.hasParent(currentIndex)) {
-        //     const parentIndex = this.getParentIndex(currentIndex);
-        //
-        //     if (this.getNode(i) < this.getNode(parentIndex)) {
-        //         this.swap(i, parentIndex);
-        //         currentIndex = parentIndex;
-        //     }
-        // }
-
-        if (i > 1) {
+        if (i > 0) {
             const parentIndex = this.getParentIndex(i);
             if (this.getNode(i) < this.getNode(parentIndex)) {
                 this.swap(i, parentIndex);
@@ -141,24 +95,26 @@ export class MinHeap implements IMinHeap {
 
     insert(v: number): void {
         this.heap.push(v);
-        this.size++;
         this.positionMap[v] = this.size;
-        this.heapifyUp(this.size);
+        this.size++;
+        this.heapifyUp(this.size - 1);
     }
 
-    deleteNodeAtPosition(i: number): number {
-        const [nodeAtPosition] = this.heap.splice(i, 1, this.heap[this.size - 1]);
-        delete this.positionMap[nodeAtPosition];
+    deleteNodeAtPosition(i: number): number | Error {
+        if (i < 0 || i > this.size - 1 || this.size === 0) {
+            throw new Error("Can't delete Node at that index.");
+        }
+
+        const [nodeAtPosition] = this.heap.splice(i, 1, this.heap.pop() as number);
         this.size--;
         this.heapifyDown(i);
+        delete this.positionMap[nodeAtPosition];
 
         return nodeAtPosition;
     }
 
-    deleteNode(v: number): number {
-        const positionOfElement = this.positionMap[v];
-
-        return this.deleteNodeAtPosition(positionOfElement);
+    deleteNode(v: number): number | Error {
+        return this.deleteNodeAtPosition(this.positionMap[v] || -1);
     }
 
     findMin(): number {
@@ -187,7 +143,11 @@ export class MinHeap implements IMinHeap {
         }
     }
 
-    startHeap(n: number): IMinHeap {
-        return new MinHeap(n);
+    public toString() {
+        return `[${this.heap.join(', ')}]`;
+    }
+
+    public static startHeap(): IMinHeap {
+        return new MinHeap();
     }
 }

@@ -5,6 +5,7 @@
     "main": "index.js",
     "scripts": {
         "start": "tsc && node dist/index.js",
+        "pretest": "tsc",
         "test": "jest",
         "assignment-1-graph": "tsc && node dist/index.js"
     },

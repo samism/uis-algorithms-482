@@ -5,4 +5,5 @@ export interface IMinHeap {
     extractMin(): string;
     changeKey(v: Record<string, number>, newPriority: number): void;
     toString(): string;
+    isEmpty(): boolean;
 }

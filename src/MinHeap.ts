@@ -107,6 +107,10 @@ export class MinHeap implements IMinHeap {
         return `[${this._heap.map((record, index) => this.getNodePriority(index)).join(', ')}]`;
     }
 
+    public isEmpty(): boolean {
+        return this._size === 0;
+    }
+
     public static startHeap(n: number): IMinHeap {
         return new MinHeap(n);
     }

@@ -1,10 +1,8 @@
 export interface IMinHeap {
-    heapifyDown(i: number): void;
-    heapifyUp(i: number): void;
-    insert(v: number): void;
-    deleteNodeAtPosition(i: number): number | Error;
-    deleteNode(v: number): number | Error;
-    findMin(): number;
-    extractMin(): number;
-    changeKey(v: number, newValue: number): void;
+    insert(v: Record<string, number>): void;
+    deleteNode(v: Record<string, number>): Record<string, number>;
+    findMin(): string;
+    extractMin(): string;
+    changeKey(v: Record<string, number>, newPriority: number): void;
+    toString(): string;
 }

@@ -1,6 +1,8 @@
 import { IGraph } from './IGraph';
 import { GraphVertex } from './GraphVertex';
 import { GraphEdge } from './GraphEdge';
+import { IMinHeap } from './IMinHeap';
+import { MinHeap } from './MinHeap';
 
 export class SimpleGraph implements IGraph {
     private readonly vertices: Array<GraphVertex>;
@@ -11,6 +13,54 @@ export class SimpleGraph implements IGraph {
         this.vertices = [];
         this.directed = directed;
         this.weighted = weighted;
+    }
+
+    findMSTWithPrims(rootNodeLabel: string): IGraph {
+        if (this.directed) {
+            throw new Error(`Prim's algorithm requires an undirected graph.`);
+        }
+
+        const minimumSpanningTree: IGraph = new SimpleGraph(false, true);
+        const rootNode = new GraphVertex(rootNodeLabel);
+        const priorityQueue: IMinHeap = MinHeap.startHeap(rootNode.edges.length);
+        const visitedVertices: GraphVertex[] = [rootNode];
+        const allEdges: GraphEdge[] = this.vertices.map(vertex => vertex.edges).flat();
+
+        // add all possible edges off of rootNode to the priority queue
+        rootNode.edges.forEach(edge => priorityQueue.insert({ [edge.destination.id]: Number.MAX_SAFE_INTEGER }));
+
+        while (!priorityQueue.isEmpty()) {
+            // const minNodeVertex: GraphVertex = new GraphVertex(priorityQueue.extractMin());
+            const minEdge: GraphEdge | undefined = allEdges.find(edge => edge.id === priorityQueue.extractMin());
+
+            if (minEdge === undefined) {
+                throw new Error('Something went wrong locating minEdge!');
+            }
+
+            let nextMinVertex: GraphVertex | null = null;
+
+            if (!visitedVertices.includes(minEdge.origin)) {
+                nextMinVertex = minEdge.origin;
+            } else if (!visitedVertices.includes(minEdge.destination)) {
+                nextMinVertex = minEdge.destination;
+            }
+
+            if (nextMinVertex) {
+                minimumSpanningTree.addEdgeDirect(minEdge);
+                visitedVertices.push(nextMinVertex);
+                nextMinVertex.edges.forEach(edge => {
+                    if (!visitedVertices.includes(edge.origin) || !visitedVertices.includes(edge.destination)) {
+                        priorityQueue.insert({ [edge.id]: edge.weight });
+                    }
+                });
+            }
+        }
+
+        return minimumSpanningTree;
+    }
+
+    addEdgeDirect(newEdge: GraphEdge): GraphEdge {
+        return this.addEdge(newEdge.origin.name, newEdge.destination.name, newEdge.weight);
     }
 
     addEdge(originLabel: string, destinationLabel: string, weight: number): GraphEdge {

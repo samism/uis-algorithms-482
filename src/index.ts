@@ -4,6 +4,7 @@ import os from 'os';
 import inquirer from 'inquirer';
 
 import { SimpleGraph } from './SimpleGraph';
+import { GraphVertex } from './GraphVertex';
 
 function initializeGraph(fileContent: Buffer): void {
     const [header, ...vertices]: string[] = fileContent.toString().split('\r\n');
@@ -28,15 +29,19 @@ function initializeGraph(fileContent: Buffer): void {
         .forEach(vertex => {
             const [origin, destination, weight] = vertex.split('=');
 
-            graph.addVertex(origin);
+            const originNode: GraphVertex = graph.addVertex(origin);
 
             if (destination) {
                 graph.addVertex(destination);
-                graph.addEdge(origin, destination, +weight);
+                graph.addEdge(originNode, graph.addVertex(destination), +weight);
             }
         });
 
+    console.log('Normal graph');
     console.log(graph.toString());
+
+    console.log("Minimum Spanning Tree via Prim's");
+    console.log(graph.findMSTWithPrims(graph.vertices[0].name).toString());
 }
 
 inquirer

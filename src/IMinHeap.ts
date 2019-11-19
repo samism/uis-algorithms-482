@@ -6,4 +6,5 @@ export interface IMinHeap {
     changeKey(v: Record<string, number>, newPriority: number): void;
     toString(): string;
     isEmpty(): boolean;
+    clear(): void;
 }

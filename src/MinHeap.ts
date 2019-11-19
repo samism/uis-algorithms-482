@@ -3,8 +3,8 @@ import { IMinHeap } from './IMinHeap';
 export class MinHeap implements IMinHeap {
     private readonly _maximumSize: number;
     private _size: number;
-    private readonly _heap: Record<string, number>[]; // vertex id and its weight
-    private readonly _positionMap: Map<Record<string, number>, number>; // O(1) lookup of value's index in the array
+    private _heap: Record<string, number>[]; // vertex id and its weight
+    private _positionMap: Map<Record<string, number>, number>; // O(1) lookup of value's index in the array
 
     private constructor(maximumSize: number) {
         this._maximumSize = maximumSize;
@@ -61,6 +61,15 @@ export class MinHeap implements IMinHeap {
         this.deleteNodeAtPosition(0);
 
         return min;
+    }
+
+    /**
+     * Same as startHeap(), except allows for reuse of class instance
+     */
+    public clear(): void {
+        this._size = 0;
+        this._heap = [];
+        this._positionMap = new Map<Record<string, number>, number>();
     }
 
     /**
@@ -122,14 +131,22 @@ export class MinHeap implements IMinHeap {
      * @param i Index of node
      */
     private deleteNodeAtPosition(i: number): Record<string, number> {
-        const [nodeAtPosition] = this._heap.splice(i, 1, this._heap.pop() as Record<string, number>);
+        if (this._size > 1) {
+            const [nodeAtPosition] = this._heap.splice(i, 1, this._heap.pop() as Record<string, number>);
 
-        this._positionMap.set(this.getNode(this._size - 1), i);
-        this._positionMap.delete(nodeAtPosition);
-        this._size--;
-        this.heapifyDown(i);
+            this._positionMap.set(this.getNode(this._size - 1), i);
+            this._positionMap.delete(nodeAtPosition);
+            this._size--;
+            this.heapifyDown(i);
 
-        return nodeAtPosition;
+            return nodeAtPosition;
+        }
+
+        const lastRemainingNode = this._heap.pop() as Record<string, number>;
+        this._positionMap.delete(lastRemainingNode);
+        this._size = 0;
+
+        return lastRemainingNode;
     }
 
     /**

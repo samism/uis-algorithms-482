@@ -5,13 +5,11 @@ export class GraphEdge {
     private readonly _weight: number;
     private readonly _origin: GraphVertex;
     private readonly _destination: GraphVertex;
-    private readonly _uuid: string;
 
-    constructor(origin: string, destination: string, weight: number) {
-        this._origin = new GraphVertex(origin);
-        this._destination = new GraphVertex(destination);
+    constructor(origin: GraphVertex, destination: GraphVertex, weight: number) {
+        this._origin = origin;
+        this._destination = destination;
         this._weight = weight;
-        this._uuid = uuid();
     }
 
     get weight(): number {
@@ -26,7 +24,7 @@ export class GraphEdge {
         return this._destination;
     }
 
-    get id(): string {
-        return this._uuid;
+    toString(): string {
+        return `${this._origin.name}->${this._destination.name}`;
     }
 }

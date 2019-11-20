@@ -36,35 +36,32 @@ export class SimpleGraph implements IGraph {
         minimumSpanningTree.addVertexDirect(new GraphVertex(rootNode.name));
 
         while (!priorityQueue.isEmpty()) {
-            const nextSmallestEdgeName: string = priorityQueue.extractMin();
-            const nextSmallestEdge: GraphEdge | undefined = allEdges.find(
-                edge => edge.toString() === nextSmallestEdgeName,
+            const currentMinEdgeKey = priorityQueue.extractMin();
+            const currentMinEdge: GraphEdge | undefined = allEdges.find(edge => edge.toString() === currentMinEdgeKey);
+
+            if (currentMinEdge === undefined) {
+                throw new Error('Could not find edge existing in priority queue.');
+            }
+
+            const currentMinEdgeOriginNode: GraphVertex = currentMinEdge.origin;
+            const currentMinEdgeDestinationNode: GraphVertex = currentMinEdge.destination;
+
+            if (visitedVertices.some(visitedVertex => visitedVertex.name === currentMinEdgeDestinationNode.name)) {
+                continue;
+            }
+
+            minimumSpanningTree.addVertexDirect(new GraphVertex(currentMinEdgeDestinationNode.name));
+            minimumSpanningTree.addEdgeDirect(
+                new GraphEdge(
+                    new GraphVertex(currentMinEdgeOriginNode.name),
+                    new GraphVertex(currentMinEdgeDestinationNode.name),
+                    currentMinEdge.weight,
+                ),
             );
-
-            if (nextSmallestEdge === undefined) {
-                throw new Error('Something went wrong locating minEdge!');
-            }
-
-            const smallestEdgeDestinationVertex: GraphVertex = nextSmallestEdge.destination;
-
-            if (!visitedVertices.some(visitedVertex => visitedVertex.name === smallestEdgeDestinationVertex.name)) {
-                const newVertex = new GraphVertex(smallestEdgeDestinationVertex.name);
-                visitedVertices.push(newVertex);
-                minimumSpanningTree.addVertexDirect(newVertex);
-                minimumSpanningTree.addEdgeDirect(nextSmallestEdge);
-
-                // remove unchosen options from consideration next iteration
-                if (smallestEdgeDestinationVertex.edges.length) {
-                    priorityQueue.clear();
-                }
-
-                // add all possible edges off of newly visited node
-                smallestEdgeDestinationVertex.edges.forEach(edge => {
-                    priorityQueue.insert({ [edge.toString()]: edge.weight });
-                });
-
-                debugger;
-            }
+            currentMinEdgeDestinationNode.edges.forEach(newEdge =>
+                priorityQueue.insert({ [newEdge.toString()]: newEdge.weight }),
+            );
+            visitedVertices.push(currentMinEdgeDestinationNode);
         }
 
         return minimumSpanningTree;

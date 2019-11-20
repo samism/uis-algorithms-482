@@ -32,7 +32,6 @@ function initializeGraph(fileContent: Buffer): void {
             const originNode: GraphVertex = graph.addVertex(origin);
 
             if (destination) {
-                graph.addVertex(destination);
                 graph.addEdge(originNode, graph.addVertex(destination), +weight);
             }
         });
@@ -40,8 +39,8 @@ function initializeGraph(fileContent: Buffer): void {
     console.log('Normal graph');
     console.log(graph.toString());
 
-    console.log("Minimum Spanning Tree via Prim's");
-    console.log(graph.findMSTWithPrims(graph.vertices[0].name).toString());
+    console.log("\nMinimum Spanning Tree via Prim's");
+    console.log(graph.findMSTWithPrims('r').toString());
 }
 
 inquirer
